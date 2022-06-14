@@ -56,7 +56,7 @@ public class Game extends JFrame implements KeyListener {
         return (int) ((Math.random() * (max - min)) + min);
     }
 
-    Game() throws InterruptedException {
+    Game() {
 
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         this.getContentPane().setLayout(new java.awt.GridLayout(4, 4));
@@ -82,202 +82,182 @@ public class Game extends JFrame implements KeyListener {
             if (i3 != i1 && i4 != i2)
                 break;
         }
-        
+
         a[i1][i2] = 2;
         a[i3][i4] = 4;
 
         updateBoard(a);
         addKeyListener(new java.awt.event.KeyAdapter() {
-            int k=a[0][0];
+            int k = a[0][0];
+
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    tmp[i][j] = a[i][j];
+                    for (int j = 0; j < 4; j++) {
+                        tmp[i][j] = a[i][j];
+                    }
                 }
-            }
                 input = formKeyPressed(evt);
-                k = k+1;
-                if(input == "UP") {upmove(a);}
-                if(input == "DOWN") {downmove(a);}
-                if(input == "LEFT") {leftmove(a);}
-                if(input == "RIGHT") {rightmove(a);}
+                k = k + 1;
+                if (input == "UP") {
+                    upmove(a);
+                }
+                if (input == "DOWN") {
+                    downmove(a);
+                }
+                if (input == "LEFT") {
+                    leftmove(a);
+                }
+                if (input == "RIGHT") {
+                    rightmove(a);
+                }
+
+                if (check(tmp, a) == 0) {
+                    addblock(a);
+                }
 
                 updateBoard(a);
-                System.out.println(input);
-                System.out.println(k);
+
+                if (checkover(a) == 0) {
+                    dispose();
+                    new GameOver();
+                }
             }
 
-            void upmove(int a[][])
-            {
-	        int i,j,li,ri;
-	        for(j=0;j<4;j++)
-	        {
-		        li=0;ri=j;
-		        for(i=1;i<4;i++)
-		        {
-			        if(a[i][j]!=0)
-			        {
-				        if(a[i-1][j]==0 || a[i-1][j]==a[i][j])
-				        {
-					if(a[li][ri]==a[i][j])
-					{
-						a[li][ri]*=2;
-						a[i][j]=0;
-					}
-					else
-					{
-						if(a[li][ri]==0)
-						{
-							a[li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-						else
-						{
-							a[++li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-					}
-				}
-				else li++;
-			}
-		}
-	}
-}
-             void downmove(int a[][])
-            {
-	int i,j,li,ri;
-	for(j=0;j<4;j++)
-	{
-		li=3;ri=j;
-		for(i=2;i>=0;i--)
-		{
-			if(a[i][j]!=0)
-			{
-				if(a[i+1][j]==0 || a[i+1][j]==a[i][j])
-				{
-					if(a[li][ri]==a[i][j])
-					{
-						a[li][ri]*=2;
-						a[i][j]=0;
-					}
-					else
-					{
-						if(a[li][ri]==0)
-						{
-							a[li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-						else
-						{
-							a[--li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-					}
-				}
-				else li--;
-			}
-		}
-	}
-}
-            void leftmove(int a[][])
-            {
-	int i,j,li,ri;
-	for(i=0;i<4;i++)
-	{
-		li=i;ri=0;
-		for(j=1;j<4;j++)
-		{
-			if(a[i][j]!=0)
-			{
-				if(a[i][j-1]==0 || a[i][j-1]==a[i][j])
-				{
-					if(a[li][ri]==a[i][j])
-					{
-						a[li][ri]*=2;
-						a[i][j]=0;
-					}
-					else
-					{
-						if(a[li][ri]==0)
-						{
-							a[li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-						else
-						{
-							a[li][++ri]=a[i][j];
-							a[i][j]=0;
-						}
-					}
-				}
-				else ri++;
-			}
-		}
-	}
-}
-            void rightmove(int a[][])
-            {
-	int i,j,li,ri;
-	for(i=0;i<4;i++)
-	{
-		li=i;ri=3;
-		for(j=2;j>=0;j--)
-		{
-			if(a[i][j]!=0)
-			{
-				if(a[i][j+1]==0 || a[i][j+1]==a[i][j])
-				{
-					if(a[li][ri]==a[i][j])
-					{
-						a[li][ri]*=2;
-						a[i][j]=0;
-					}
-					else
-					{
-						if(a[li][ri]==0)
-						{
-							a[li][ri]=a[i][j];
-							a[i][j]=0;
-						}
-						else
-						{
-							a[li][--ri]=a[i][j];
-							a[i][j]=0;
-						}
-					}
-				}
-				else ri--;
-			}
-		}
-	}
-}
+            int checkover(int a[][]) {
+                int i, j;
+                boolean fl = false;
+                for (i = 0; i < 4; i++)
+                    for (j = 0; j < 4; j++)
+                        if (a[i][j] == 0) {
+                            fl = true;
+                            break;
+                        }
 
+                boolean gl = false;
+                for (i = 0; i < 3; i++)
+                    for (j = 0; j < 3; j++)
+                        if (a[i + 1][j] == a[i][j] || a[i][j + 1] == a[i][j]) {
+                            gl = true;
+                            break;
+                        }
 
+                if (fl || gl) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
 
-});
-
-        while (true) {
-            for (i = 0; i < 4; i++) {
+            void upmove(int a[][]) {
+                int i, j, li, ri;
                 for (j = 0; j < 4; j++) {
-                    tmp[i][j] = a[i][j];
+                    li = 0;
+                    ri = j;
+                    for (i = 1; i < 4; i++) {
+                        if (a[i][j] != 0) {
+                            if (a[i - 1][j] == 0 || a[i - 1][j] == a[i][j]) {
+                                if (a[li][ri] == a[i][j]) {
+                                    a[li][ri] *= 2;
+                                    a[i][j] = 0;
+                                } else {
+                                    if (a[li][ri] == 0) {
+                                        a[li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    } else {
+                                        a[++li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    }
+                                }
+                            } else
+                                li++;
+                        }
+                    }
                 }
             }
-            addKeyListener(new java.awt.event.KeyAdapter() {
-                public void keyPressed(java.awt.event.KeyEvent evt) {
-                    input = formKeyPressed(evt);
+
+            void downmove(int a[][]) {
+                int i, j, li, ri;
+                for (j = 0; j < 4; j++) {
+                    li = 3;
+                    ri = j;
+                    for (i = 2; i >= 0; i--) {
+                        if (a[i][j] != 0) {
+                            if (a[i + 1][j] == 0 || a[i + 1][j] == a[i][j]) {
+                                if (a[li][ri] == a[i][j]) {
+                                    a[li][ri] *= 2;
+                                    a[i][j] = 0;
+                                } else {
+                                    if (a[li][ri] == 0) {
+                                        a[li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    } else {
+                                        a[--li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    }
+                                }
+                            } else
+                                li--;
+                        }
+                    }
                 }
-            });
-
-            // this.addKeyListener(this);
-            System.out.println(input);
-
-            if (check(tmp, a) == 0) {
-                addblock(a);
             }
 
-            break;
+            void leftmove(int a[][]) {
+                int i, j, li, ri;
+                for (i = 0; i < 4; i++) {
+                    li = i;
+                    ri = 0;
+                    for (j = 1; j < 4; j++) {
+                        if (a[i][j] != 0) {
+                            if (a[i][j - 1] == 0 || a[i][j - 1] == a[i][j]) {
+                                if (a[li][ri] == a[i][j]) {
+                                    a[li][ri] *= 2;
+                                    a[i][j] = 0;
+                                } else {
+                                    if (a[li][ri] == 0) {
+                                        a[li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    } else {
+                                        a[li][++ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    }
+                                }
+                            } else
+                                ri++;
+                        }
+                    }
+                }
+            }
 
-        }
+            void rightmove(int a[][]) {
+                int i, j, li, ri;
+                for (i = 0; i < 4; i++) {
+                    li = i;
+                    ri = 3;
+                    for (j = 2; j >= 0; j--) {
+                        if (a[i][j] != 0) {
+                            if (a[i][j + 1] == 0 || a[i][j + 1] == a[i][j]) {
+                                if (a[li][ri] == a[i][j]) {
+                                    a[li][ri] *= 2;
+                                    a[i][j] = 0;
+                                } else {
+                                    if (a[li][ri] == 0) {
+                                        a[li][ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    } else {
+                                        a[li][--ri] = a[i][j];
+                                        a[i][j] = 0;
+                                    }
+                                }
+                            } else
+                                ri--;
+                        }
+                    }
+                }
+            }
+
+        });
+
 
         // list.get(2).setText("2");
         setVisible(true);
